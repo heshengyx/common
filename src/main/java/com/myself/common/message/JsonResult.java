@@ -4,33 +4,33 @@ import java.util.List;
 
 public class JsonResult<T> {
 
-	private int sEcho;
-	private int iTotalRecords;
-	private int iTotalDisplayRecords;
-	private List<T> aaData;
+	private String draw;
+	private int recordsTotal;
+	private int recordsFiltered;
 	
-	public int getsEcho() {
-		return sEcho;
+	public String getDraw() {
+		return draw;
 	}
-	public void setsEcho(int sEcho) {
-		this.sEcho = sEcho;
+	public void setDraw(String draw) {
+		this.draw = draw;
 	}
-	public int getiTotalRecords() {
-		return iTotalRecords;
+	private List<T> data;
+	public int getRecordsTotal() {
+		return recordsTotal;
 	}
-	public void setiTotalRecords(int iTotalRecords) {
-		this.iTotalRecords = iTotalRecords;
+	public void setRecordsTotal(int recordsTotal) {
+		this.recordsTotal = recordsTotal;
 	}
-	public int getiTotalDisplayRecords() {
-		return iTotalDisplayRecords;
+	public int getRecordsFiltered() {
+		return recordsFiltered;
 	}
-	public void setiTotalDisplayRecords(int iTotalDisplayRecords) {
-		this.iTotalDisplayRecords = iTotalDisplayRecords;
+	public void setRecordsFiltered(int recordsFiltered) {
+		this.recordsFiltered = recordsFiltered;
 	}
-	public List<T> getAaData() {
-		return aaData;
+	public List<T> getData() {
+		return data;
 	}
-	public void setAaData(List<T> aaData) {
-		this.aaData = aaData;
+	public void setData(List<T> data) {
+		this.data = data;
 	}
 }
