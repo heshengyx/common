@@ -13,18 +13,17 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 public class FileUtil {
-	public static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
 			"yyyy/MM/dd");
-	public static SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat(
+	public static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat(
 			"yyyy-MM");
-	public static int SUCCESS = 1;
-	public static int FAIL = 2;
-	public static int ERROR = 3;
-	public final static String[] HEX_DIGITS = { "0", "1", "2", "3", "4", "5",
+	public static final int SUCCESS = 1;
+	public static final int FAIL = 2;
+	public static final int ERROR = 3;
+	public static final String[] HEX_DIGITS = { "0", "1", "2", "3", "4", "5",
 			"6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
-	public static String TEMP_FOLDER;
-	public static String UPLOAD_FOLDER;
-	public static String PICTURE_FOLDER;
+	public static final String TEMP_FOLDER = "temps";
+	public static final String UPLOAD_FOLDER = "uploads";
 	private static final char zeroArray[] = "00000000000000000".toCharArray();
 
 	public static String getDateFilePath() {
@@ -234,6 +233,17 @@ public class FileUtil {
 			content = sb.toString();
 		}
 		return content;
+	}
+	
+	public static boolean move(File srcFile, String destPath) {
+		boolean success = false;
+		try {
+			File dir = new File(destPath);
+			success = srcFile.renameTo(new File(dir, srcFile.getName()));
+		} catch (Exception e) {
+			success = false;
+		}
+		return success;
 	}
 
 	public static void main(String[] args) {
