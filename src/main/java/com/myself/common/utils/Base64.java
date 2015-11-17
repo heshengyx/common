@@ -34,6 +34,7 @@ public class Base64 {
 		int i = start;
 		int n = 0;
 
+		
 		while (i <= end) {
 			int d = ((((int) data[i]) & 0x0ff) << 16)
 					| ((((int) data[i + 1]) & 0x0ff) << 8)
