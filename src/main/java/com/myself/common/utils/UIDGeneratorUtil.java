@@ -1,7 +1,5 @@
 package com.myself.common.utils;
 
-import java.util.UUID;
-
 public class UIDGeneratorUtil {
 	private static long lastTime = System.currentTimeMillis(); //��ǰϵͳʱ��
 	private static short lastCount = -32768;
@@ -52,7 +50,4 @@ public class UIDGeneratorUtil {
 		return (new Object()).hashCode();
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(UUID.randomUUID());
-	}
 }
