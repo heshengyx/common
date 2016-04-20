@@ -2,17 +2,17 @@ package com.myself.common.message;
 
 public class JsonMessage {
 
-	public static final String SUCCESS_CODE = "200";
-	public static final String ERROR_CODE = "500";
+	public static final boolean TRUE = true;
+	public static final boolean FALSE = false;
 	private Object data;
-	private String code;
 	private String message;
+	private boolean status;
 	
-	public String getCode() {
-		return code;
+	public boolean isStatus() {
+		return status;
 	}
-	public void setCode(String code) {
-		this.code = code;
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 	public Object getData() {
 		return data;

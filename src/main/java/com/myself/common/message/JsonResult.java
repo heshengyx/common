@@ -4,14 +4,14 @@ import java.util.List;
 
 public class JsonResult<T> {
 
-	private String draw;
+	private int draw;
 	private int recordsTotal;
 	private int recordsFiltered;
 	
-	public String getDraw() {
+	public int getDraw() {
 		return draw;
 	}
-	public void setDraw(String draw) {
+	public void setDraw(int draw) {
 		this.draw = draw;
 	}
 	private List<T> data;

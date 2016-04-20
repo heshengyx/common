@@ -143,16 +143,4 @@ public class StringUtil {
 		}
 		return result;
 	}
-
-	public static void main(String[] args) throws Exception {
-		byte[] s = encryptDES("Hello", "!12avxd@");
-		System.out.println("DES密文=========" + new String(s));
-		String d = parseByte2HexStr(s);
-		System.out.println("十六进制=========" + new String(d));
-		String c = Base64.encode(s);
-		System.out.println("Base64密文=========" + new String(c));
-		
-		String e = decryptDES(c, "!12avxd@");
-		System.out.println("明文=========" + new String(e));
-	}
 }

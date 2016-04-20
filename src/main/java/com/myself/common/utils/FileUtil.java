@@ -255,5 +255,8 @@ public class FileUtil {
 		System.out.println(FileUtil.class.getResource("/").getFile());
 		System.out.println(new File("/").getAbsolutePath());
 		System.out.println(s);
+		
+		s = MD5Encode("123456");
+		System.out.println(s);
 	}
 }
