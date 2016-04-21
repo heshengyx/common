@@ -239,24 +239,14 @@ public class FileUtil {
 		boolean success = false;
 		try {
 			File dir = new File(destPath);
+			if (!dir.isDirectory()) {
+				dir.mkdirs();
+			}
 			success = srcFile.renameTo(new File(dir, srcFile.getName()));
 		} catch (Exception e) {
+			e.printStackTrace();
 			success = false;
 		}
 		return success;
-	}
-
-	public static void main(String[] args) {
-		String s = "com.sfpay.map";
-		
-		s = getStringTokenizer(s, ".", "/");
-		
-		s = System.getProperty("user.dir");
-		System.out.println(FileUtil.class.getResource("/").getFile());
-		System.out.println(new File("/").getAbsolutePath());
-		System.out.println(s);
-		
-		s = MD5Encode("123456");
-		System.out.println(s);
 	}
 }
