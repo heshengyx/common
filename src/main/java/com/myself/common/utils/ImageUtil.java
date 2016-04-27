@@ -10,59 +10,51 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
+import com.myself.common.exception.ServiceException;
+
 public class ImageUtil {
 
-	public static String creMinImage(String imageSrc, int width, int height,
-			String path) throws Exception {
-		File file = new File(path + imageSrc); // 查找源图片文件
+	public static String creMinImage(String src, int width, int height, String path) throws Exception {
+		String image = null;
+		File file = new File(path + src); // 查找源图片文件
 		if (file.exists()) {
-			String suffix = FileUtil.getFileSuffix(imageSrc); // 取得源图片的后缀名
-			int wh = 0;
-			if (width > 0) {
-				wh = width;
-			}
-			if (height > 0) {
-				wh = height;
-			}
-			String img = imageSrc.substring(0, imageSrc.indexOf(suffix)) + "_"
-					+ wh + suffix; // 创建新文件名
-			File nfile = new File(path + img); // 查找小图片文件
+			String suffix = FileUtil.getFileSuffix(src); // 取得源图片的后缀名
+			image = src.substring(0, src.indexOf(suffix)) + "_" + width + "X" + height + suffix; // 创建新文件名
+			File nfile = new File(path + image); // 查找小图片文件
 			if (!nfile.exists()) { // 小图不存在则创建
-				img = drawImage(file, nfile, width, height, suffix); // 创建缩小图片,返回图片路径
-				if (img != null)
-					img = img.substring(path.length(), img.length())
-							.replaceAll("\\\\", "/");
+				image = drawImage(file, nfile, width, height, suffix); // 创建缩小图片,返回图片路径
+				if (image != null)
+					image = image.substring(path.length(), image.length()).replaceAll("\\\\", "/");
 			}
-			return img;
 		}
-		return "";
+		return image;
 	}
 
-	private static String drawImage(File fileImageSrc, File fileImageOut,
-			int width, int height, String suffix) {
+	private static String drawImage(File fileImageSrc, File fileImageOut, int width, int height, String suffix) {
 		String filePath = null;
 		Image image = null;
 		OutputStream output = null;
 		try {
 			image = javax.imageio.ImageIO.read(fileImageSrc); // 创建源图片对象
-			ImageVo imageVo = getOutImageVo(new ImageVo(width, height), image);
+			ImageVo imageVo = getImageVo(width, height, image);
 
 			if (imageVo.isFlag()) {
+				BufferedImage bufferedImage = new BufferedImage(imageVo.getWidth(), imageVo.getHeight(),
+						BufferedImage.TYPE_INT_RGB);
+				Graphics g = bufferedImage.createGraphics();
+				// g.drawImage(image, 0, 0, imageVo.getWidth(), imageVo.getHeight(),
+				// null); // 绘制缩小后的图
+				g.drawImage(image.getScaledInstance(imageVo.getWidth(), imageVo.getHeight(), Image.SCALE_SMOOTH), 0, 0,
+						null);
+
+				byte[] bytes = createImage(bufferedImage);
+				output = new FileOutputStream(fileImageOut);
+				output.write(bytes);
+				filePath = fileImageOut.getPath();
+			} else {
 				image.flush();
-				return fileImageSrc.getPath();
+				filePath = fileImageSrc.getPath();
 			}
-
-			BufferedImage bufferedImage = new BufferedImage(imageVo.getWidth(),
-					imageVo.getHeight(), BufferedImage.TYPE_INT_RGB);
-			Graphics g = bufferedImage.createGraphics();
-			//g.drawImage(image, 0, 0, imageVo.getWidth(), imageVo.getHeight(), null); // 绘制缩小后的图
-			g.drawImage(image.getScaledInstance(imageVo.getWidth(), imageVo.getHeight(), Image.SCALE_SMOOTH), 0, 0,  null); 
-			
-			byte[] bytes = createImage(bufferedImage);
-			output = new FileOutputStream(fileImageOut);
-			output.write(bytes);
-
-			filePath = fileImageOut.getPath();
 		} catch (Exception e) {
 			filePath = null;
 		} finally {
@@ -71,18 +63,17 @@ public class ImageUtil {
 			} catch (Exception e) {
 				filePath = null;
 			}
-
 		}
 		return filePath;
 	}
 
-	private static byte[] createImage(BufferedImage bufferedImage)
-			throws Exception {
+	private static byte[] createImage(BufferedImage bufferedImage) throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			ImageIO.write(bufferedImage, "jpeg", out);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new ServiceException("图片写入出错");
 		}
 		return out.toByteArray();
 	}
@@ -90,61 +81,37 @@ public class ImageUtil {
 	/**
 	 * 根据宽度或高度,定义缩放后新的宽度或高度
 	 */
-	private static ImageVo getOutImageVo(ImageVo imageVo, Image image) {
+	private static ImageVo getImageVo(int width, int height, Image image) {
+		ImageVo imageVo = new ImageVo();
 		boolean flag = false;
-		int width = imageVo.getWidth(); // 得到设置图像宽
-		int height = imageVo.getHeight(); // 得到设置图像高
 		int srcw = image.getWidth(null); // 得到源图像宽
 		int srch = image.getHeight(null); // 得到源图像高
-		double scale = (double) srcw / srch; // 源图像的高宽比例
-
-		if (width > 0 && height > 0) {
-			if (srcw > srch) {
-				if (srcw > width) { // 如果源图像宽比新设置的大,那就要缩放源图片的宽和高
-					height = (int) ((double) width / scale); // 重新设置图片的高
-					if (height == 0)
-						height = srch;
-				} else {
-					width = srcw;
-					height = srch;
-					flag = true;
-				}
+		
+		double scale = (double) width / height; //图像的高宽比例
+		double ratio = (double) srcw / srch; // 源图像的高宽比例
+		
+		if (srcw > width || srch > height) {
+			if ((int) ratio >= (int) scale) {
+				height = (int) ((double) width / ratio); // 重新设置图片的高
 			} else {
-				if (srch > height) { // 如果源图像高比新设置的大,那就要缩放源图片的宽和高
-					width = (int) ((double) height * scale); // 重新设置图片的宽
-					if (width == 0)
-						width = srcw;
-				} else {
-					width = srcw;
-					height = srch;
-					flag = true;
-				}
+				width = (int) ((double) height * ratio); // 重新设置图片的高
 			}
-		} else if (width > 0) { //如果只设置了宽度,且大于0
-			if (srcw > width) { // 如果源图像宽比新设置的大,那就要缩放源图片的宽和高
-				height = (int) ((double) width / scale); // 重新设置图片的高
-				if (height == 0)
-					height = srch;
-			} else {
-				flag = true;
-			}
-		} else if (height > 0) {
-			if (srch > height) { // 如果源图像高比新设置的大,那就要缩放源图片的宽和高
-				width = (int) ((double) height * scale); // 重新设置图片的宽
-				if (width == 0)
-					width = srcw;
-			} else {
-				flag = true;
-			}
-		} else {
-			width = srcw;
-			height = srch;
 			flag = true;
 		}
 		imageVo.setWidth(width);
 		imageVo.setHeight(height);
 		imageVo.setFlag(flag);
 		return imageVo;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println((double) 10/3);
+		
+		try {
+			ImageUtil.creMinImage("image-5.jpg", 600, 500, "F:/images/");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
 
@@ -186,5 +153,4 @@ class ImageVo {
 	public void setFlag(boolean flag) {
 		this.flag = flag;
 	}
-
 }
