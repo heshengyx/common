@@ -107,11 +107,13 @@ public class ImageUtil {
 	public static void main(String[] args) {
 		System.out.println((double) 10/3);
 		
+		String url = "temps/image-1.jpg";
 		try {
-			ImageUtil.creMinImage("image-5.jpg", 600, 500, "F:/images/");
+			url = ImageUtil.creMinImage(url, 205, 150, "E:/images/");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("url=========" + url);
 	}
 }
 
