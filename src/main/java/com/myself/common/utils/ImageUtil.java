@@ -16,11 +16,11 @@ public class ImageUtil {
 
 	public static String creMinImage(String src, int width, int height, String path) throws Exception {
 		String image = null;
-		File file = new File(path + src); // 查找源图片文件
+		File file = new File(path + "/" + src); // 查找源图片文件
 		if (file.exists()) {
 			String suffix = FileUtil.getFileSuffix(src); // 取得源图片的后缀名
 			image = src.substring(0, src.indexOf(suffix)) + "_" + width + "X" + height + suffix; // 创建新文件名
-			File nfile = new File(path + image); // 查找小图片文件
+			File nfile = new File(path + "/" + image); // 查找小图片文件
 			if (!nfile.exists()) { // 小图不存在则创建
 				image = drawImage(file, nfile, width, height, suffix); // 创建缩小图片,返回图片路径
 				if (image != null)
@@ -109,7 +109,7 @@ public class ImageUtil {
 		
 		String url = "temps/image-1.jpg";
 		try {
-			url = ImageUtil.creMinImage(url, 205, 150, "E:/images/");
+			url = ImageUtil.creMinImage(url, 205, 150, "E:/images");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
