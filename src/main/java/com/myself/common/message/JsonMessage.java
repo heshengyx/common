@@ -7,7 +7,14 @@ public class JsonMessage {
 	private Object data;
 	private String message;
 	private boolean status;
+	private boolean valid;
 	
+	public boolean isValid() {
+		return valid;
+	}
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
 	public boolean isStatus() {
 		return status;
 	}
